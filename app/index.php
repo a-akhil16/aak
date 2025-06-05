@@ -1,1 +1,0 @@
-<?php echo 'Yii2 Sample App Placeholder'; ?>
