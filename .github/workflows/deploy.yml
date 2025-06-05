@@ -1,23 +1,28 @@
-name: Deploy
+name: Deploy Yii2 App
 
 on:
-  push:
-    branches: [main]
+  workflow_dispatch:  # Manual trigger
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: SSH into EC2 and Deploy
-      uses: appleboy/ssh-action@master
-      with:
-      #  host: ${{ secrets.HOST }}
-     #   username: ${{ secrets.USERNAME }}
-      #  key: ${{ secrets.SSH_KEY }}
-        script: |
-          cd ~/yii2-docker-ansible-cicd
-          git pull origin main
-          docker stack deploy -c docker/docker-compose.yml yii2app
+    - name: Setup SSH
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+
+    - name: Deploy via SSH
+      run: |
+        ssh ec2-user@${{ secrets.EC2_HOST }} 
+          cd /path/to/project &&
+          git pull &&
+          docker build -t yii2-app . &&
+          docker stack deploy -c docker-compose.yml yii2app
+        

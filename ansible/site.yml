@@ -1,0 +1,25 @@
+---
+- hosts: web
+  become: yes
+  tasks:
+    - name: Install Docker
+      apt:
+        name: docker.io
+        state: present
+    - name: Install NGINX
+      apt:
+        name: nginx
+        state: present
+    - name: Copy NGINX config
+      copy:
+        src: ../nginx/yii2.conf
+        dest: /etc/nginx/sites-available/yii2
+    - name: Enable NGINX config
+      file:
+        src: /etc/nginx/sites-available/yii2
+        dest: /etc/nginx/sites-enabled/yii2
+        state: link
+    - name: Restart NGINX
+      service:
+        name: nginx
+        state: restarted
