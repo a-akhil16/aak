@@ -1,2 +1,0 @@
-- name: Deploy Docker Stack
-  command: docker stack deploy -c /home/ubuntu/swarm/docker-stack.yml app_stack
