@@ -1,7 +1,9 @@
 name: Deploy Yii2 App
 
 on:
-  workflow_dispatch:  # Manual trigger
+  push:
+    branches:
+      - main  # or your deployment branch
 
 jobs:
   deploy:
@@ -20,9 +22,9 @@ jobs:
 
     - name: Deploy via SSH
       run: |
-        ssh ec2-user@${{ secrets.EC2_HOST }} 
+        ssh ec2-user@${{ secrets.EC2_HOST }} '
           cd /path/to/project &&
           git pull &&
           docker build -t yii2-app . &&
           docker stack deploy -c docker-compose.yml yii2app
-        
+        '
